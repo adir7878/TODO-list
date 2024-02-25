@@ -1,0 +1,22 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.NewLogin" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/lavender</item>
+        <item name="colorPrimaryVariant">@color/lavender</item>
+        <item name="colorOnPrimary">@color/white</item>
+    </style>
+    <!-- Base application theme. -->
+    <style name="Base.Base.Theme.NewLogin" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+    </style>
+    <style name="Circular">
+        <item name="cornerSize">50%</item>
+    </style>
+
+    <!-- Animation styles -->
+    <style name="DialogAnimation">
+        <item name="android:windowEnterAnimation">@anim/slide_up</item>
+        <item name="android:windowExitAnimation">@anim/slide_down</item>
+    </style>
+</resources>

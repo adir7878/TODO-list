@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#593C3C3C"
+    android:padding="10dp">
+
+    <ImageView
+        android:id="@+id/tasks_list_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:src="@drawable/baseline_menu_24"
+        android:layout_marginEnd="10dp"/>
+
+    <TextView
+        android:id="@+id/list_tasks_description"
+        android:layout_toStartOf="@+id/date_display_list_tasks"
+        android:layout_toEndOf="@+id/tasks_list_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="Title"
+        android:fontFamily="@font/bungee"/>
+
+    <TextView
+        android:id="@+id/date_display_list_tasks"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="8dp"
+        tools:text="21/21/2020" />
+
+</RelativeLayout>

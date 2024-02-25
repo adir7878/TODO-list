@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".inApp.SettingsFragment"
+    android:background="@android:color/transparent">
+
+    <TextView
+        android:id="@+id/SettingsTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Settings"
+        android:textSize="40sp"
+        android:textColor="@color/Default_color_for_app"
+        android:fontFamily="@font/bungee"/>
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/ProfileImage"
+        android:layout_centerHorizontal="true"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_below="@+id/SettingsTitle"
+        android:background="@drawable/circle_image"
+        android:scaleType="centerCrop"
+        android:src="@drawable/avatar"
+        app:shapeAppearanceOverlay="@style/Circular" />
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/ProfileImage">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Change Username"
+                android:textColorHint="@color/black"
+                app:boxStrokeColor="@color/black"
+                app:hintTextColor="@color/black">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/changeUsername"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:textColor="@color/inputColor" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp">
+
+                <TextView
+                    android:id="@+id/verifyEmail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:text="Email"
+                    android:textColor="@color/black"
+                    android:textSize="20dp" />
+
+                <TextView
+                    android:id="@+id/verifyButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:background="@color/Default_color_for_app"
+                    android:text="Verify Email"
+                    android:textColor="@color/black"
+                    android:textSize="20sp" />
+            </FrameLayout>
+
+            <Button
+                android:id="@+id/saveChangesButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/buttons_styles"
+                android:fontFamily="@font/bungee"
+                android:text="save changes"
+                />
+
+            <Button
+                android:id="@+id/logoutButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/buttons_styles"
+                android:fontFamily="@font/bungee"
+                android:text="logout"
+                android:backgroundTint="@color/Default_color_for_app" />
+
+            <Button
+                android:id="@+id/deleteAccountButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/buttons_styles"
+                android:fontFamily="@font/bungee"
+                android:text="delete account"
+                android:backgroundTint="@color/Default_color_for_app"/>
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>

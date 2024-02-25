@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "5744328153",
+    "project_id": "login-7c9f7",
+    "storage_bucket": "login-7c9f7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:5744328153:android:aafa51843adcf0ca362dc8",
+        "android_client_info": {
+          "package_name": "com.adirmor.login"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyADqw24Z6w41WcmgBtEb9MlMhMbg4K8i7I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:5744328153:android:640d6c469afbc294362dc8",
+        "android_client_info": {
+          "package_name": "com.adirmor.newlogin"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyADqw24Z6w41WcmgBtEb9MlMhMbg4K8i7I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

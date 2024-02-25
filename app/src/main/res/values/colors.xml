@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="Default_color_for_app">#F38628</color>
+    <color name="menuColor">#20AF92</color>
+    <color name="selectedMenuOption">#49FF00</color>
+    <color name="inputColor">#000</color>
+    <color name="lavender">#8692f7</color>
+    <color name="lightRed">#FF2400</color>
+    <color name="lightGreen">#90EE90</color>
+</resources>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/taskTemplate"
+    android:layout_marginTop="8dp"
+    tools:context=".inApp.TasksFragment"
+    app:cardBackgroundColor="#FFD68A"
+    app:cardCornerRadius="12dp">
+
+    <RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="8dp">
+
+        <ImageView
+            android:id="@+id/task_speaker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/speaker"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_centerVertical="true" />
+
+        <CheckBox
+            android:id="@+id/checkTaskCompletedAndTask"
+            android:layout_toStartOf="@+id/task_speaker"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            tools:text="@string/app_name"
+            android:textColor="@android:color/black"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:buttonTint="#FF0000"
+            android:layout_centerVertical="true"/>
+
+        <TextView
+            android:id="@+id/dateOfTask"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="DD/MM/YY hh:mm"
+            android:textColor="@android:color/black"
+            android:layout_below="@+id/checkTaskCompletedAndTask"
+            android:layout_alignParentEnd="true" />
+
+
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".inApp.MultiTasksFragment"
+    android:background="@android:color/transparent">
+    
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Lists"
+        android:textSize="40sp"
+        android:fontFamily="@font/bungee"
+        android:textColor="@color/Default_color_for_app"
+        android:id="@+id/lists_page_title"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/lists_recycler_view"
+        android:layout_below="@id/lists_page_title"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:backgroundTint="@color/Default_color_for_app"
+        android:src="@drawable/ic_add"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="16dp"
+        android:id="@+id/create_list_floating_button"/>
+
+
+</RelativeLayout>
