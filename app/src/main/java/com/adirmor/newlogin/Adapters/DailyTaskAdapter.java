@@ -23,7 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 
-public class DailyTaskAdapter extends abstractAdapterForTasks {
+public class DailyTaskAdapter extends RecyclerView.Adapter<TasksHolderView> {
 
     // Text to speech engine
     private TextToSpeech textToSpeech;
@@ -111,7 +111,7 @@ public class DailyTaskAdapter extends abstractAdapterForTasks {
     }
 
     // Read task text aloud
-    public void readText(@NonNull TasksHolderView holder) {
+    private void readText(@NonNull TasksHolderView holder) {
         try {
             textToSpeech = new TextToSpeech(context, status -> {
                 if (status != TextToSpeech.ERROR) {

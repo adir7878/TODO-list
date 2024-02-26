@@ -6,11 +6,14 @@ import android.graphics.Paint;
 import android.os.Handler;
 import android.speech.tts.TextToSpeech;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.adirmor.newlogin.Models.TaskModel;
 import com.adirmor.newlogin.R;
@@ -22,7 +25,7 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 
-public class CompletedDailyTaskAdapter extends abstractAdapterForTasks {
+public class CompletedDailyTaskAdapter extends RecyclerView.Adapter<TasksHolderView> {
 
     private TextToSpeech textToSpeech;
     private final Context context;
@@ -112,8 +115,7 @@ public class CompletedDailyTaskAdapter extends abstractAdapterForTasks {
     }
 
     // Read task text aloud
-    @Override
-    public void readText(@NonNull TasksHolderView holder) {
+    private void readText(@NonNull TasksHolderView holder) {
         try {
             textToSpeech = new TextToSpeech(context, status -> {
                 if (status != TextToSpeech.ERROR) {
