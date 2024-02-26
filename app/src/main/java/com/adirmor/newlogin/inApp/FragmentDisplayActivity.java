@@ -80,23 +80,19 @@ public class FragmentDisplayActivity extends AppCompatActivity {
     //delete daily tasks in 00:00.
     @Override
     protected void onResume() {
-        super.onResume ();
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences (this);
-        int lastTimeStarted = settings.getInt ("last_time_started", -1);
-        Calendar calendar = Calendar.getInstance ();
-        int today = calendar.get (Calendar.DAY_OF_YEAR);
+        super.onResume();
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+        int lastTimeStarted = settings.getInt("last_time_started", -1);
+        int today = Calendar.getInstance().get(Calendar.DAY_OF_YEAR);
 
         if (today != lastTimeStarted) {
-            FirebaseUtils.getDailyTaskModel ().get ().addOnCompleteListener (task -> {
-               for (DocumentSnapshot documentSnapshot: task.getResult ()){
-                   documentSnapshot.getReference ().delete ();
-               }
+            FirebaseUtils.getDailyTaskModel().get().addOnSuccessListener(queryDocumentSnapshots -> {
+                for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                    documentSnapshot.getReference().delete();
+                }
             });
 
-            SharedPreferences.Editor editor = settings.edit ();
-            editor.putInt ("last_time_started", today);
-            editor.commit ();
+            settings.edit().putInt("last_time_started", today).apply();
         }
     }
-
 }

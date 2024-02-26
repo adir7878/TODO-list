@@ -70,7 +70,7 @@ public class TasksFragment extends Fragment {
     private void initializeRecyclerViews(View view) {
         recyclerView = view.findViewById (R.id.recyclerView);
         recyclerView.setLayoutManager (new LinearLayoutManager (getContext ()));
-        adapterOfNotCompletedTask = new DailyTaskAdapter (getContext (), tasks, completedTasks, view.findViewById (R.id.progressBar));
+        adapterOfNotCompletedTask = new DailyTaskAdapter (getContext (), tasks, completedTasks);
         recyclerView.setAdapter (adapterOfNotCompletedTask);
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper (new SwipeTo (getContext (), tasks, adapterOfNotCompletedTask));
         itemTouchHelper.attachToRecyclerView (recyclerView);
@@ -78,7 +78,7 @@ public class TasksFragment extends Fragment {
 
         recyclerViewOfCompletedTasks = view.findViewById (R.id.recyclerView_completed_tasks);
         recyclerViewOfCompletedTasks.setLayoutManager (new LinearLayoutManager (getContext ()));
-        adapterOfCompletedTasks = new CompletedDailyTaskAdapter (getContext (), completedTasks, tasks, view.findViewById (R.id.progressBar));
+        adapterOfCompletedTasks = new CompletedDailyTaskAdapter (getContext (), completedTasks, tasks);
         recyclerViewOfCompletedTasks.setAdapter (adapterOfCompletedTasks);
         ItemTouchHelper itemTouchHelperComp = new ItemTouchHelper (new SwipeToComp (getContext (), completedTasks, adapterOfCompletedTasks));
         itemTouchHelperComp.attachToRecyclerView (recyclerViewOfCompletedTasks);

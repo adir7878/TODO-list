@@ -6,14 +6,11 @@ import android.graphics.Paint;
 import android.os.Handler;
 import android.speech.tts.TextToSpeech;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.adirmor.newlogin.Models.TaskModel;
 import com.adirmor.newlogin.R;
@@ -25,20 +22,18 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 
-public class CompletedDailyTaskAdapter extends RecyclerView.Adapter<TasksHolderView> {
+public class CompletedDailyTaskAdapter extends abstractAdapterForTasks {
 
     private TextToSpeech textToSpeech;
     private final Context context;
     private final List<TaskModel> taskModels;
     private final List<TaskModel> notCompTasksModels;
-    private final ProgressBar progressBar;
 
     // Constructor
-    public CompletedDailyTaskAdapter(Context context, List<TaskModel> tasks, List<TaskModel> notCompTasksModels, ProgressBar progressBar) {
+    public CompletedDailyTaskAdapter(Context context, List<TaskModel> tasks, List<TaskModel> notCompTasksModels) {
         this.context = context;
         this.taskModels = tasks;
         this.notCompTasksModels = notCompTasksModels;
-        this.progressBar = progressBar;
     }
 
     // Create ViewHolder
@@ -51,6 +46,7 @@ public class CompletedDailyTaskAdapter extends RecyclerView.Adapter<TasksHolderV
     // Bind data to ViewHolder
     @Override
     public void onBindViewHolder(@NonNull TasksHolderView holder, @SuppressLint("RecyclerView") int position) {
+        TaskModel taskModel = taskModels.get (holder.getAdapterPosition ());
         holder.checkBox.setText(taskModels.get(position).getDescription ());
         holder.checkBox.setChecked(true);
         if (taskModels.get(position).getSelectedTimestamp() != null)
@@ -61,20 +57,21 @@ public class CompletedDailyTaskAdapter extends RecyclerView.Adapter<TasksHolderV
 
         // Set task to true
         holder.checkBox.setOnClickListener(v -> {
-            progressBar.setVisibility(View.VISIBLE);
-            FirebaseUtils.getDailyTaskModel ().whereEqualTo("id", taskModels.get(holder.getAdapterPosition()).getId()).get().addOnCompleteListener(task -> {
+            holder.checkBox.setEnabled (false);
+
+            //notify to adapters
+            taskModels.remove(holder.getAdapterPosition());
+            notifyItemRemoved(holder.getAdapterPosition());
+
+            taskModel.setChecked(!taskModel.isChecked());
+            notCompTasksModels.add(taskModel);
+            TasksFragment.adapterOfNotCompletedTask.notifyItemInserted(notCompTasksModels.size());
+
+            FirebaseUtils.getDailyTaskModel ().whereEqualTo("id", taskModel.getId()).get().addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
-                    taskModels.get(holder.getAdapterPosition()).setChecked(!taskModels.get(holder.getAdapterPosition()).isChecked());
-                    FunctionsUtils.cancelAlarm(context, taskModels.get(holder.getAdapterPosition()));
-                    task.getResult().getDocuments().get(0).getReference().set(taskModels.get(holder.getAdapterPosition()));
-                    notCompTasksModels.add(taskModels.get(holder.getAdapterPosition()));
-
-                    //notify to adapters
-                    taskModels.remove(holder.getAdapterPosition());
-                    notifyItemRemoved(holder.getAdapterPosition());
-                    TasksFragment.adapterOfNotCompletedTask.notifyItemInserted(notCompTasksModels.size());
-
-                    progressBar.setVisibility(View.GONE);
+                    FunctionsUtils.cancelAlarm(context, taskModel);
+                    task.getResult().getDocuments().get(0).getReference().set(taskModel);
+                    holder.checkBox.setEnabled (true);
                 }
             });
 
@@ -115,7 +112,8 @@ public class CompletedDailyTaskAdapter extends RecyclerView.Adapter<TasksHolderV
     }
 
     // Read task text aloud
-    private void readText(@NonNull TasksHolderView holder) {
+    @Override
+    public void readText(@NonNull TasksHolderView holder) {
         try {
             textToSpeech = new TextToSpeech(context, status -> {
                 if (status != TextToSpeech.ERROR) {

@@ -23,7 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 
-public class DailyTaskAdapter extends RecyclerView.Adapter<TasksHolderView> {
+public class DailyTaskAdapter extends abstractAdapterForTasks {
 
     // Text to speech engine
     private TextToSpeech textToSpeech;
@@ -37,15 +37,11 @@ public class DailyTaskAdapter extends RecyclerView.Adapter<TasksHolderView> {
     // List of completed task models
     private final List<TaskModel> completedTasks;
 
-    // Progress bar to show during operations
-    private final ProgressBar progressBar;
-
     // Constructor
-    public DailyTaskAdapter(Context context, List<TaskModel> tasks, List<TaskModel> completedTasks, ProgressBar progressBar) {
+    public DailyTaskAdapter(Context context, List<TaskModel> tasks, List<TaskModel> completedTasks) {
         this.context = context;
         this.taskModels = tasks;
         this.completedTasks = completedTasks;
-        this.progressBar = progressBar;
     }
 
     // Create ViewHolder
@@ -66,23 +62,22 @@ public class DailyTaskAdapter extends RecyclerView.Adapter<TasksHolderView> {
 
         // Click listener for checkbox to mark task as completed
         holder.checkBox.setOnClickListener(v -> {
-            progressBar.setVisibility(View.VISIBLE);
+            holder.checkBox.setEnabled (false);
+
+            taskModels.remove(taskModel);
+            notifyItemRemoved(holder.getAdapterPosition());
+
+            completedTasks.add(taskModel);
+            TasksFragment.adapterOfCompletedTasks.notifyItemInserted(completedTasks.size());
+
             FirebaseUtils.getDailyTaskModel ().whereEqualTo("id", taskModel.getId()).get().addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     taskModel.setChecked(!taskModel.isChecked());
                     FunctionsUtils.cancelAlarm(context, taskModel);
                     task.getResult().getDocuments().get(0).getReference().set(taskModel);
-                    completedTasks.add(taskModel);
-                    taskModels.remove(taskModel);
+                    holder.checkBox.setEnabled (true);
                 }
             });
-
-            holder.itemView.setAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_out_animation));
-            new Handler().postDelayed(() -> {
-                notifyItemRemoved(holder.getAdapterPosition());
-                TasksFragment.adapterOfCompletedTasks.notifyItemInserted(completedTasks.size());
-                progressBar.setVisibility(View.GONE);
-            }, 500);
         });
 
         // Click listener for speaker to read task text aloud
@@ -101,12 +96,14 @@ public class DailyTaskAdapter extends RecyclerView.Adapter<TasksHolderView> {
     // Delete a task
     public TaskModel deleteTask(int position) {
         TaskModel taskModel = taskModels.get(position);
+
+        taskModels.remove(taskModel);
+        notifyItemRemoved(position);
+
         FirebaseUtils.getDailyTaskModel ().whereEqualTo("id", taskModel.getId()).get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 FunctionsUtils.cancelAlarm(context, taskModel);
                 task.getResult().getDocuments().get(0).getReference().delete().addOnSuccessListener(unused -> {
-                    taskModels.remove(taskModel);
-                    notifyItemRemoved(position);
                 });
             }
         });
@@ -114,7 +111,7 @@ public class DailyTaskAdapter extends RecyclerView.Adapter<TasksHolderView> {
     }
 
     // Read task text aloud
-    private void readText(@NonNull TasksHolderView holder) {
+    public void readText(@NonNull TasksHolderView holder) {
         try {
             textToSpeech = new TextToSpeech(context, status -> {
                 if (status != TextToSpeech.ERROR) {
