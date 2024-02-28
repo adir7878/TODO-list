@@ -15,18 +15,18 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
-import com.adirmor.newlogin.Adapters.ListsAdapter;
-import com.adirmor.newlogin.Models.ListsModel;
+import com.adirmor.newlogin.Adapters.RoomAdapter;
+import com.adirmor.newlogin.Models.RoomModel;
+import com.adirmor.newlogin.Models.UserModel;
 import com.adirmor.newlogin.R;
 import com.adirmor.newlogin.Utils.FirebaseUtils;
+import com.adirmor.newlogin.bottomSheets.dialog.JoinRoomDialog;
 import com.adirmor.newlogin.bottomSheets.edits.EditListNameBS;
 import com.adirmor.newlogin.bottomSheets.creates.createListBottomSheet;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,12 +36,12 @@ import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator
 public class MultiTasksFragment extends Fragment {
 
     private RecyclerView recyclerView;
-    private ListsAdapter adapter;
-    private List<ListsModel> listsModelList;
+    private RoomAdapter adapter;
+    private List<RoomModel> roomModelList;
 
 
     public MultiTasksFragment(){
-        listsModelList = new ArrayList<> ();
+        roomModelList = new ArrayList<> ();
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -49,48 +49,75 @@ public class MultiTasksFragment extends Fragment {
 
         recyclerView = view.findViewById (R.id.lists_recycler_view);
         recyclerView.setLayoutManager (new LinearLayoutManager (getContext ()));
-        adapter = new ListsAdapter (getContext (), listsModelList);
+        adapter = new RoomAdapter (getContext (), roomModelList);
         recyclerView.setAdapter (adapter);
 
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper (new SwipeTo (getContext (), listsModelList, adapter));
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper (new SwipeTo (getContext (), roomModelList, adapter));
         itemTouchHelper.attachToRecyclerView (recyclerView);
 
-        printListsOfTasks ();
+        printListsOfTasks (view);
 
         FloatingActionButton floatingActionButton = view.findViewById (R.id.create_list_floating_button);
         floatingActionButton.setOnClickListener (this::openCreateListBottomSheet);
 
+        Button button = view.findViewById (R.id.join_room_open_dialog);
+        button.setOnClickListener (this::openJoinRoomDialog);
+
         return view;
     }
 
-    private void openCreateListBottomSheet(View view) {
-        new createListBottomSheet (getContext (), adapter, listsModelList).show ();
+    private void openJoinRoomDialog(View view) {
+        new JoinRoomDialog (getContext (), roomModelList, adapter).show();
     }
 
-    private void printListsOfTasks(){
-        FirebaseUtils.getListsCollection ().get ().addOnCompleteListener (new OnCompleteListener<QuerySnapshot> () {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(task.isSuccessful ()){
-                    listsModelList.clear ();
-                    List<ListsModel> listsModel = task.getResult ().toObjects (ListsModel.class);
-                    listsModelList.addAll(listsModel);
-                    adapter.notifyDataSetChanged ();
+    private void openCreateListBottomSheet(View view) {
+        new createListBottomSheet (getContext (), adapter, roomModelList).show ();
+    }
+
+    private void printListsOfTasks(View view){
+        (view.findViewById (R.id.progressBar)).setVisibility (View.VISIBLE);
+        roomModelList.clear ();
+
+        FirebaseUtils.getRoomsCollection ().whereArrayContains ("participantIDs", FirebaseUtils.getCurrentUserId ())
+                .get ().addOnCompleteListener (task -> {
+                    if(task.isSuccessful ()){
+                        List<RoomModel> roomModels = task.getResult ().toObjects (RoomModel.class);
+                        roomModelList.addAll (roomModels);
+                        adapter.notifyDataSetChanged ();
+                    }
+
+                    (view.findViewById (R.id.progressBar)).setVisibility (View.GONE);
+                });
+
+/*
+        FirebaseUtils.getUserModel ().get ().addOnCompleteListener (task -> {
+            if(task.isSuccessful ()) {
+                UserModel userModel = task.getResult ().toObject (UserModel.class);
+                for (int i = 0; i < userModel.getRoomIDs ().size (); i++) {
+                    FirebaseUtils.getRoomsCollection ().whereEqualTo ("id", userModel.getRoomIDs ().get (i)).get ().addOnCompleteListener (task1 -> {
+                        if (task1.isSuccessful ()) {
+                            RoomModel roomModel = task1.getResult ().toObjects (RoomModel.class).get (0);
+                            roomModelList.add (roomModel);
+                            adapter.notifyItemInserted (roomModelList.size ());
+                        }
+                    });
                 }
             }
+            (view.findViewById (R.id.progressBar)).setVisibility (View.GONE);
         });
+*/
     }
 
     public class SwipeTo extends ItemTouchHelper.SimpleCallback{
 
         private final Context context;
-        private final List<ListsModel> listsModelList;
-        private final ListsAdapter adapter;
+        private final List<RoomModel> roomModelList;
+        private final RoomAdapter adapter;
 
-        public SwipeTo(Context context, List<ListsModel> listsModelList, ListsAdapter adapter) {
+        public SwipeTo(Context context, List<RoomModel> roomModelList, RoomAdapter adapter) {
             super (0, ItemTouchHelper.RIGHT | ItemTouchHelper.LEFT);
             this.context = context;
-            this.listsModelList = listsModelList;
+            this.roomModelList = roomModelList;
             this.adapter = adapter;
         }
 
@@ -107,17 +134,22 @@ public class MultiTasksFragment extends Fragment {
 
             switch (direction){
                 case ItemTouchHelper.LEFT:
-                    ListsModel listsModel = adapter.deleteList (position);
-                    Snackbar.make (recyclerView, listsModel.getName ().toString (), Snackbar.LENGTH_LONG)
+                    RoomModel roomModel = adapter.deleteList (position);
+                    Snackbar.make (recyclerView, roomModel.getName ().toString (), Snackbar.LENGTH_LONG)
                             .setAction ("Undo", view -> {
-                                listsModelList.add (position, listsModel);
-                                FirebaseUtils.getListsCollection ().document ().set (listsModel).addOnSuccessListener (unused -> {
+                                roomModelList.add (position, roomModel);
+                                FirebaseUtils.getRoomsCollection ().document ().set (roomModel).addOnSuccessListener (unused -> {
+                                    FirebaseUtils.getUserModel ().get ().addOnCompleteListener (task1 -> {
+                                        UserModel userModel = task1.getResult ().toObject (UserModel.class);
+                                        userModel.getRoomIDs ().add (roomModel.getId ());
+                                        task1.getResult ().getReference ().update ("roomIDs", userModel.getRoomIDs ());
+                                    });
                                     adapter.notifyItemInserted (position);
                                 });
                             }).show ();
                     break;
                 case ItemTouchHelper.RIGHT:
-                    new EditListNameBS (context, listsModelList, adapter, position).show ();
+                    new EditListNameBS (context, roomModelList, adapter, position).show ();
                     break;
             }
         }

@@ -28,14 +28,11 @@
         android:theme="@style/Base.Theme.NewLogin"
         tools:targetApi="31" >
         <activity
-            android:name=".inApp.insideFragments.TaskDetailDisplayActivity"
-            android:exported="false" />
-        <activity
             android:name=".inApp.insideFragments.ListDisplayActivity"
             android:exported="false" />
         <activity
             android:name=".inApp.FragmentDisplayActivity"
-            android:exported="false" />
+            android:exported="true" />
         <activity
             android:name=".loginAndRegister.splashScreen"
             android:exported="true" >

@@ -7,15 +7,19 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.widget.Toast;
 
 import com.adirmor.newlogin.Adapters.PlannedTaskAdapter;
-import com.adirmor.newlogin.Adapters.TasksOfListAdapter;
-import com.adirmor.newlogin.Models.ListsModel;
-import com.adirmor.newlogin.Models.TaskOfListModel;
+import com.adirmor.newlogin.Adapters.RoomAdapter;
+import com.adirmor.newlogin.Adapters.TasksOfRoomAdapter;
+import com.adirmor.newlogin.Models.RoomModel;
+import com.adirmor.newlogin.Models.TaskOfRoomModel;
+import com.adirmor.newlogin.Models.UserModel;
 import com.adirmor.newlogin.Notification.AlertReceiver;
 import com.adirmor.newlogin.Models.TaskModel;
 import com.adirmor.newlogin.Adapters.DailyTaskAdapter;
 import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.CollectionReference;
 
 import java.util.Calendar;
 import java.util.List;
@@ -41,24 +45,59 @@ public class FunctionsUtils {
         });
     }
 
-    public static void createTaskForList(String description, List<TaskOfListModel> modelsArray, TasksOfListAdapter adapter, String listID){
-        TaskOfListModel model = new TaskOfListModel (description);
-        FirebaseUtils.getSpecificList (listID).get ().addOnCompleteListener (task -> {
-            List<ListsModel> listsModelList = task.getResult ().toObjects (ListsModel.class);
-            modelsArray.add (model);
-            listsModelList.get (0).setList (modelsArray);
-            task.getResult ().getDocuments ().get (0).getReference ().set (listsModelList.get (0)).addOnSuccessListener (unused -> {
-                adapter.notifyItemInserted (modelsArray.size () - 1);
-            });
+    public static void createTaskForRoom(String description, List<TaskOfRoomModel> modelsArray, String RoomID){
+        TaskOfRoomModel model = new TaskOfRoomModel (description);
+        FirebaseUtils.getTasksOfRoomCollection (RoomID, collectionReference -> {
+            if(collectionReference == null)
+                return;
+            collectionReference.add (model);
         });
     }
 
-    public static void isCompleted_TasksOfList(int position,  List<TaskOfListModel> taskModels, String id) {
-        taskModels.get (position).setCompleted (!taskModels.get (position).isCompleted ());
-        FirebaseUtils.getSpecificList (id).get ().addOnCompleteListener (task -> {
-            List<ListsModel> taskOfListModelList = task.getResult ().toObjects (ListsModel.class);
-            taskOfListModelList.get (0).setList (taskModels);
-            task.getResult ().getDocuments ().get (0).getReference ().set (taskOfListModelList.get (0));
+    public static void isCompleted_TasksOfList(int position, TaskOfRoomModel model, String id) {
+        model.setCompleted (!model.isCompleted ());
+        FirebaseUtils.getTasksOfRoomCollection (id, collectionReference -> {
+            if(collectionReference == null)
+                return;
+            collectionReference.whereEqualTo ("id", model.getId ()).get ().addOnCompleteListener (task -> {
+                if(task.isSuccessful ()){
+                    task.getResult ().getDocuments ().get (0).getReference ().update ("completed", model.isCompleted ());
+                }
+            });
+        });
+//        FirebaseUtils.getSpecificRoom (id).get ().addOnCompleteListener (task -> {
+//            RoomModel roomModel = task.getResult ().toObjects (RoomModel.class).get (0);
+//            roomModel.getTasks ().set (position, model);
+//            task.getResult ().getDocuments ().get (0).getReference ().update ("tasks", roomModel.getTasks ());
+//        });
+    }
+
+    public static void addUserToRoomWithCode(String roomCode, List<RoomModel> roomModelList, RoomAdapter adapter, Context context){
+
+        FirebaseUtils.getSpecificRoomByCode (roomCode).get ().addOnCompleteListener (task -> {
+            if(task.isSuccessful ()){
+
+                if (task.getResult ().getDocuments ().size () == 0) {
+                    Toast.makeText (context, "Nah bruh", Toast.LENGTH_SHORT).show ();
+                    return;
+                }
+
+                RoomModel roomModel = task.getResult ().toObjects (RoomModel.class).get (0);
+
+                if(roomModel.getParticipantIDs ().contains (FirebaseUtils.getCurrentUserId ())){
+                    Toast.makeText (context, "Already in Room.", Toast.LENGTH_SHORT).show ();
+                    return;
+                }
+
+                roomModel.getParticipantIDs ().add (FirebaseUtils.getCurrentUserId ());
+                task.getResult ().getDocuments ().get (0).getReference ().update ("participantIDs", roomModel.getParticipantIDs ());
+
+                roomModelList.add (roomModel);
+                adapter.notifyItemInserted (roomModelList.size ());
+
+            }else {
+                Toast.makeText (context, "Room Code Are Invalid.", Toast.LENGTH_SHORT).show ();
+            }
         });
     }
 

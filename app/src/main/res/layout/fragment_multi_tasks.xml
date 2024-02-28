@@ -6,19 +6,38 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".inApp.MultiTasksFragment"
     android:background="@android:color/transparent">
-    
-    <TextView
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Lists"
-        android:textSize="40sp"
-        android:fontFamily="@font/bungee"
-        android:textColor="@color/Default_color_for_app"
-        android:id="@+id/lists_page_title"/>
+        android:id="@+id/rooms_toolbar">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Lists"
+            android:textSize="40sp"
+            android:fontFamily="@font/bungee"
+            android:textColor="@color/Default_color_for_app"
+            android:layout_toStartOf="@+id/join_room_open_dialog"/>
+
+        <Button
+            android:id="@+id/join_room_open_dialog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:backgroundTint="@color/Default_color_for_app"
+            android:fontFamily="@font/bungee"
+            android:text="join room"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="20dp"/>
+
+    </RelativeLayout>
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/lists_recycler_view"
-        android:layout_below="@id/lists_page_title"
+        android:layout_below="@id/rooms_toolbar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
@@ -31,6 +50,13 @@
         android:layout_alignParentBottom="true"
         android:layout_margin="16dp"
         android:id="@+id/create_list_floating_button"/>
+
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/progressBar"
+        android:layout_centerInParent="true"
+        android:visibility="gone"/>
 
 
 </RelativeLayout>

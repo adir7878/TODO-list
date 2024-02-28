@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <EditText
+        android:id="@+id/code_edittext"
+        android:layout_width="300dp"
+        android:layout_height="40dp"
+        android:background="@drawable/edit_text_bg"
+        android:elevation="8dp"
+        android:hint="Enter Room Code"
+        android:maxLength="10"
+        android:textColor="@color/Default_color_for_app"/>
+
+    <Button
+        android:id="@+id/enter_room_code"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/Default_color_for_app"
+        android:text="join"
+        android:fontFamily="@font/bungee"
+        android:layout_gravity="end"
+        />
+
+</LinearLayout>

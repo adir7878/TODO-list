@@ -47,6 +47,8 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.HolderView> {
             Intent intent = new Intent (context, ListDisplayActivity.class);
             intent.putExtra ("id", roomModelList.get (position).getId ());
             intent.putExtra ("name", roomModelList.get (position).getName ());
+            intent.putExtra ("hostID", roomModelList.get (position).getHostId ());
+            intent.putExtra ("roomCode", roomModelList.get (position).getCode ());
             context.startActivity (intent);
         });
     }

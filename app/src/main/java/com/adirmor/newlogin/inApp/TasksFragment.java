@@ -74,7 +74,7 @@ public class TasksFragment extends Fragment {
         recyclerView.setAdapter (adapterOfNotCompletedTask);
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper (new SwipeTo (getContext (), tasks, adapterOfNotCompletedTask));
         itemTouchHelper.attachToRecyclerView (recyclerView);
-        printNotCheckedTasks ();
+        printNotCheckedTasks (view);
 
         recyclerViewOfCompletedTasks = view.findViewById (R.id.recyclerView_completed_tasks);
         recyclerViewOfCompletedTasks.setLayoutManager (new LinearLayoutManager (getContext ()));
@@ -82,25 +82,29 @@ public class TasksFragment extends Fragment {
         recyclerViewOfCompletedTasks.setAdapter (adapterOfCompletedTasks);
         ItemTouchHelper itemTouchHelperComp = new ItemTouchHelper (new SwipeToComp (getContext (), completedTasks, adapterOfCompletedTasks));
         itemTouchHelperComp.attachToRecyclerView (recyclerViewOfCompletedTasks);
-        printCheckedTasks ();
+        printCheckedTasks (view);
     }
 
-    private void printNotCheckedTasks() {
+    private void printNotCheckedTasks(View view) {
+        (view.findViewById (R.id.progressBar)).setVisibility (View.VISIBLE);
         tasks.clear ();
         FirebaseUtils.getDailyTaskModel ().whereEqualTo ("checked", false).get ().addOnCompleteListener (task -> {
             if (task.isSuccessful ()) {
                 tasks.addAll (task.getResult ().toObjects (TaskModel.class));
                 adapterOfNotCompletedTask.notifyDataSetChanged ();
+                (view.findViewById (R.id.progressBar)).setVisibility (View.GONE);
             }
         });
     }
 
-    private void printCheckedTasks() {
+    private void printCheckedTasks(View view) {
+        (view.findViewById (R.id.progressBar)).setVisibility (View.VISIBLE);
         completedTasks.clear ();
         FirebaseUtils.getDailyTaskModel ().whereEqualTo ("checked", true).get ().addOnCompleteListener (task -> {
             if (task.isSuccessful ()) {
                 completedTasks.addAll (task.getResult ().toObjects (TaskModel.class));
                 adapterOfCompletedTasks.notifyDataSetChanged ();
+                (view.findViewById (R.id.progressBar)).setVisibility (View.GONE);
             }
         });
     }

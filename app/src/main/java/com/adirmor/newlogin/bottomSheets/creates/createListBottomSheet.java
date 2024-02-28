@@ -8,8 +8,9 @@ import android.widget.DatePicker;
 
 import androidx.annotation.NonNull;
 
-import com.adirmor.newlogin.Adapters.ListsAdapter;
-import com.adirmor.newlogin.Models.ListsModel;
+import com.adirmor.newlogin.Adapters.RoomAdapter;
+import com.adirmor.newlogin.Models.RoomModel;
+import com.adirmor.newlogin.Models.UserModel;
 import com.adirmor.newlogin.R;
 import com.adirmor.newlogin.Utils.FirebaseUtils;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -19,17 +20,16 @@ import com.google.firebase.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 public class createListBottomSheet extends BottomSheetDialog {
 
     private TextInputEditText Description;
     private DatePicker datePicker;
     private Button create;
-    private ListsAdapter adapter;
-    private List<ListsModel> listsModelList;
+    private RoomAdapter adapter;
+    private List<RoomModel> roomModelList;
 
-    public createListBottomSheet(@NonNull Context context, ListsAdapter adapter, List<ListsModel> listsModelList) {
+    public createListBottomSheet(@NonNull Context context, RoomAdapter adapter, List<RoomModel> roomModelList) {
         super (context);
         View view  = LayoutInflater.from (context).inflate (R.layout.add_list_of_tasks, null);
         setContentView (view);
@@ -40,7 +40,7 @@ public class createListBottomSheet extends BottomSheetDialog {
         datePicker.setMinDate (Calendar.getInstance ().getTimeInMillis ());
         create = view.findViewById (R.id.createList);
         this.adapter = adapter;
-        this.listsModelList = listsModelList;
+        this.roomModelList = roomModelList;
         
         create.setOnClickListener (this::createList);
 
@@ -49,10 +49,17 @@ public class createListBottomSheet extends BottomSheetDialog {
     private void createList(View view) {
         if(Description.getText ().toString ().isEmpty ())
             return;
-        ListsModel listsModel = new ListsModel (Description.getText ().toString (), convertToFirebaseTimestamp (datePicker));
-        FirebaseUtils.getListsCollection ().document ().set (listsModel).addOnSuccessListener (unused -> {
-            listsModelList.add (listsModel);
-            adapter.notifyItemInserted (listsModelList.size ());
+        RoomModel roomModel = new RoomModel (Description.getText ().toString (), convertToFirebaseTimestamp (datePicker));
+        FirebaseUtils.getRoomsCollection ().add (roomModel).addOnSuccessListener (unused -> {
+           FirebaseUtils.getUserModel ().get ().addOnCompleteListener (task -> {
+               if (task.isSuccessful ()){
+                   UserModel userModel = task.getResult ().toObject (UserModel.class);
+                   userModel.getRoomIDs ().add (roomModel.getId ());
+                   task.getResult ().getReference ().update ("roomIDs", userModel.getRoomIDs ());
+               }
+           });
+            roomModelList.add (roomModel);
+            adapter.notifyItemInserted (roomModelList.size ());
         });
         dismiss ();
     }

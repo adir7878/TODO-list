@@ -1,10 +1,14 @@
 package com.adirmor.newlogin.Models;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class UserModel {
 
     private String Email;
     private String Password;
     private String Username;
+    private List<String> roomIDs = new ArrayList<> ();
 
 
     public UserModel() {
@@ -38,5 +42,13 @@ public class UserModel {
 
     public void setUsername(String username) {
         Username = username;
+    }
+
+    public List<String> getRoomIDs() {
+        return roomIDs;
+    }
+
+    public void setRoomIDs(List<String> roomIDs) {
+        this.roomIDs = roomIDs;
     }
 }
