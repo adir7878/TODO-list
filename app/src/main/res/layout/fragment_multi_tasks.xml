@@ -15,7 +15,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Lists"
+            android:text="Task Lists"
             android:textSize="40sp"
             android:fontFamily="@font/bungee"
             android:textColor="@color/Default_color_for_app"

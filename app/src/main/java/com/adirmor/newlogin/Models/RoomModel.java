@@ -16,7 +16,7 @@ public class RoomModel {
     private Timestamp time;
     private String hostId = FirebaseUtils.getCurrentUserId ();
     private List<String> participantIDs = new ArrayList<> ();
-    private List<TaskOfRoomModel> tasks = new ArrayList<> ();
+    private List<String> blockedUsersID = new ArrayList<> ();
 
     public RoomModel() {
         if(!participantIDs.contains (FirebaseUtils.getCurrentUserId ()))
@@ -53,13 +53,6 @@ public class RoomModel {
         this.time = time;
     }
 
-    public List<TaskOfRoomModel> getTasks() {
-        return tasks;
-    }
-
-    public void setTasks(List<TaskOfRoomModel> tasks) {
-        this.tasks = tasks;
-    }
 
     public String getCode() {
         return code;
@@ -87,7 +80,7 @@ public class RoomModel {
 
     // Method to generate a random room code
     public static String generateRoomCode() {
-        final String ALLOWED_CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        final String ALLOWED_CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijkmnlopqrstuvwxyz0123456789";
         final int CODE_LENGTH = 10;
         StringBuilder codeBuilder = new StringBuilder();
         Random random = new Random ();
@@ -100,5 +93,13 @@ public class RoomModel {
         }
 
         return codeBuilder.toString();
+    }
+
+    public List<String> getBlockedUsersID() {
+        return blockedUsersID;
+    }
+
+    public void setBlockedUsersID(List<String> blockedUsersID) {
+        this.blockedUsersID = blockedUsersID;
     }
 }

@@ -21,16 +21,13 @@ public class createTaskForListBottomSheet extends BottomSheetDialog {
 
     private final String listID;
     private final TasksOfRoomAdapter adapter;
-    private final List<TaskOfRoomModel> taskOfListModelRoom;
     private final TextInputEditText description;
-    public createTaskForListBottomSheet(@NonNull Context context, List<TaskOfRoomModel> taskOfListModelRoom,
-                                        TasksOfRoomAdapter adapter, String listID) {
+    public createTaskForListBottomSheet(@NonNull Context context, TasksOfRoomAdapter adapter, String listID) {
         super (context);
         @SuppressLint("InflateParams") View view = LayoutInflater.from (context).inflate(R.layout.add_task_to_list_of_tasks, null);
         setContentView (view);
 
         this.adapter = adapter;
-        this.taskOfListModelRoom = taskOfListModelRoom;
         this.listID = listID;
 
         description = view.findViewById (R.id.task_of_list_description);
@@ -43,7 +40,7 @@ public class createTaskForListBottomSheet extends BottomSheetDialog {
     private void createTask(View view) {
         if(description.getText ().toString ().isEmpty ())
             return;
-        FunctionsUtils.createTaskForRoom (description.getText ().toString (), taskOfListModelRoom, listID);
+        FunctionsUtils.createTaskForRoom (description.getText ().toString (), listID);
         dismiss ();
     }
 }

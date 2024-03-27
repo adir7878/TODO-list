@@ -19,15 +19,14 @@ import com.adirmor.newlogin.Utils.FunctionsUtils;
 import java.util.List;
 
 public class JoinRoomDialog extends Dialog {
-
-    private final List<RoomModel> roomModelList;
+    private final EditText editTextCode;
     private final RoomAdapter adapter;
-    private EditText editTextCode;
+    private final List<RoomModel> roomModels;
 
-    public JoinRoomDialog(@NonNull Context context, List<RoomModel> roomModelList, RoomAdapter adapter) {
+    public JoinRoomDialog(@NonNull Context context, RoomAdapter adapter, List<RoomModel> roomModels) {
         super (context);
-        this.roomModelList = roomModelList;
         this.adapter = adapter;
+        this.roomModels = roomModels;
         View view = LayoutInflater.from (context).inflate (R.layout.enter_room_code_dialog, null);
         setContentView (view);
 
@@ -45,7 +44,7 @@ public class JoinRoomDialog extends Dialog {
             return;
         }else
             editTextCode.setError (null);
-        FunctionsUtils.addUserToRoomWithCode (code, roomModelList, adapter, getContext ());
+        FunctionsUtils.addUserToRoomWithCode (code, getContext (), roomModels, adapter);
         dismiss ();
     }
 }

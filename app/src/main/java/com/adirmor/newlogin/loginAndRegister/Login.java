@@ -98,7 +98,8 @@ public class Login extends AppCompatActivity {
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        Toast.makeText (this, "Worked", Toast.LENGTH_SHORT).show ();
+                        CheckBox rememberMeButton = findViewById (R.id.rememberMeButton);
+                        setSharedPreferences (rememberMeButton.isChecked ());
                         startActivity (new Intent (Login.this, FragmentDisplayActivity.class));
                         finish ();
                     } else {
@@ -124,10 +125,6 @@ public class Login extends AppCompatActivity {
         });
         passwordResetDialog.show ();
     }
-    public void setAutoLogin(){
-        CheckBox rememberMeButton = findViewById (R.id.rememberMeButton);
-        rememberMeButton.setOnCheckedChangeListener ((compoundButton, b) -> setSharedPreferences (compoundButton.isChecked ()));
-    }
     public void setSharedPreferences(boolean b) {
         SharedPreferences sharedPreferences = getSharedPreferences ("isAlreadySignIn", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit ();
@@ -140,7 +137,6 @@ public class Login extends AppCompatActivity {
         super.onStart ();
         SharedPreferences preferences = getSharedPreferences ("isAlreadySignIn", MODE_PRIVATE);
         boolean check = preferences.getBoolean ("remember", false);
-        setAutoLogin();
 
         if(check){
             startActivity (new Intent (getApplicationContext (), FragmentDisplayActivity.class));

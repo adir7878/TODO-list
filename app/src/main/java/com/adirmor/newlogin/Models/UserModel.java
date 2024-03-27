@@ -1,5 +1,7 @@
 package com.adirmor.newlogin.Models;
 
+import com.adirmor.newlogin.Utils.FirebaseUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,7 +10,8 @@ public class UserModel {
     private String Email;
     private String Password;
     private String Username;
-    private List<String> roomIDs = new ArrayList<> ();
+    private String id = FirebaseUtils.getCurrentUserId ();
+    private boolean isBlockedFromRooms = false;
 
 
     public UserModel() {
@@ -44,11 +47,19 @@ public class UserModel {
         Username = username;
     }
 
-    public List<String> getRoomIDs() {
-        return roomIDs;
+    public String getId() {
+        return id;
     }
 
-    public void setRoomIDs(List<String> roomIDs) {
-        this.roomIDs = roomIDs;
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public boolean isBlockedFromRooms() {
+        return isBlockedFromRooms;
+    }
+
+    public void setBlockedFromRooms(boolean blockedFromRooms) {
+        isBlockedFromRooms = blockedFromRooms;
     }
 }

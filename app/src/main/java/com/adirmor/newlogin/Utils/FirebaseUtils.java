@@ -6,6 +6,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -26,37 +27,24 @@ public class FirebaseUtils {
     public static boolean isUserEmailVerify(){
         return FirebaseAuth.getInstance ().getCurrentUser ().isEmailVerified ();
     }
-    public static StorageReference getProfilePictureReference(){
-        return FirebaseStorage.getInstance ().getReference ().child (getCurrentUserId ()).child ("Profile_pic");
+    public static StorageReference getProfilePictureReference(String id){
+        return FirebaseStorage.getInstance ().getReference ().child ("Profile_pics").child (id);
     }
-    /*public static CollectionReference getRoomsCollection(){
-        return getUserModel ().collection ("Rooms");
-    }
-    public static Query getSpecificList(String id){
-        return getRoomsCollection ().whereEqualTo ("id", id);
-    }*/
-
     public static CollectionReference getRoomsCollection(){
         return FirebaseFirestore.getInstance ().collection ("Rooms");
     }
-    public static Query getSpecificRoom(String id){
-        return getRoomsCollection ().whereEqualTo ("id", id);
+    public static DocumentReference getSpecificRoom(String roomId){
+        return getRoomsCollection ().document (roomId);
     }
     public static Query getSpecificRoomByCode(String code){
         return getRoomsCollection ().whereEqualTo ("code", code);
     }
-    public static void getTasksOfRoomCollection(String id, TaskCollectionCallback taskCollectionCallback){
-        FirebaseUtils.getSpecificRoom (id).get ().addOnCompleteListener (task -> {
-            if(task.isSuccessful ()){
-                CollectionReference collectionReference = task.getResult ().getDocuments ().get (0).getReference ().collection ("tasks");
-                taskCollectionCallback.onTaskCollection (collectionReference);
-                return;
-            }
-             taskCollectionCallback.onTaskCollection (null);
-        });
 
+    public static CollectionReference getTasksOfRoomCollection(String id){
+        return FirebaseUtils.getSpecificRoom (id).collection ("tasks");
     }
-    public interface TaskCollectionCallback {
-        void onTaskCollection(CollectionReference collectionReference);
+
+    public static CollectionReference getUserModelOfRoomCollection(String roomID){
+        return FirebaseUtils.getSpecificRoom(roomID).collection ("participants");
     }
 }

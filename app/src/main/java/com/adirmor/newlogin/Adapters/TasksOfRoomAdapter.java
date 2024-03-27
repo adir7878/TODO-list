@@ -54,7 +54,7 @@ public class TasksOfRoomAdapter extends FirestoreRecyclerAdapter<TaskOfRoomModel
             strikeThroughDescription(holder);
             holder.description.setOnClickListener(view -> {
                 strikeThroughDescription(holder);
-                FunctionsUtils.isCompleted_TasksOfList(position, model, id);
+                FunctionsUtils.isCompleted_TasksOfList(model, id);
             });
             holder.speaker.setOnClickListener(view -> {
                 readText(holder);
@@ -69,12 +69,10 @@ public class TasksOfRoomAdapter extends FirestoreRecyclerAdapter<TaskOfRoomModel
     }
 
     public TaskOfRoomModel deleteTask(TaskOfRoomModel model){
-        FirebaseUtils.getTasksOfRoomCollection (id, collectionReference -> {
-            if(collectionReference == null)
-                return;
-            collectionReference.whereEqualTo ("id", model.getId ()).get ().addOnCompleteListener (task -> {
-               task.getResult ().getDocuments ().get (0).getReference ().delete ();
-            });
+        FirebaseUtils.getTasksOfRoomCollection (id).whereEqualTo ("id", model.getId ()).get ().addOnCompleteListener (task -> {
+            if(task.isSuccessful ()){
+                task.getResult ().getDocuments ().get (0).getReference ().delete ();
+            }
         });
         return model;
     }

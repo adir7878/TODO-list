@@ -20,6 +20,7 @@ import com.adirmor.newlogin.Adapters.PlannedTaskAdapter;
 import com.adirmor.newlogin.Models.TaskModel;
 import com.adirmor.newlogin.R;
 import com.adirmor.newlogin.Utils.FirebaseUtils;
+import com.adirmor.newlogin.Utils.FunctionsUtils;
 import com.adirmor.newlogin.bottomSheets.creates.createPlannedTaskBottomSheet;
 import com.adirmor.newlogin.bottomSheets.edits.EditPlannedTaskBS;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -59,6 +60,10 @@ public class PlannedTasksFragment extends Fragment {
     }
 
     private void createPlannedTask(View view) {
+        if (!FirebaseUtils.isUserEmailVerify ()) {
+            Toast.makeText (getContext (), "Verify Your Email At Settings.", Toast.LENGTH_SHORT).show ();
+            return;
+        }
         new createPlannedTaskBottomSheet (getContext (), taskModels, plannedTaskAdapter).show ();
     }
 
@@ -101,6 +106,7 @@ public class PlannedTasksFragment extends Fragment {
                     Snackbar.make (recyclerView, taskModel.getDescription ().toString (), Snackbar.LENGTH_SHORT)
                             .setAction ("Undo", view -> {
                                 taskModels.add (position, taskModel);
+                                FunctionsUtils.setAlarm (context, taskModel);
                                 FirebaseUtils.getPlannedTaskModel ().document ().set (taskModel).addOnSuccessListener (unused -> adapter.notifyItemInserted (position));
                             }).show ();
                     break;

@@ -2,9 +2,10 @@ package com.adirmor.newlogin.inApp;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.pm.PackageManager;
+import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,10 +24,12 @@ import com.adirmor.newlogin.Adapters.DailyTaskAdapter;
 import com.adirmor.newlogin.Models.TaskModel;
 import com.adirmor.newlogin.R;
 import com.adirmor.newlogin.Utils.FirebaseUtils;
+import com.adirmor.newlogin.Utils.FunctionsUtils;
 import com.adirmor.newlogin.bottomSheets.edits.EditDailyTaskBS;
 import com.adirmor.newlogin.bottomSheets.creates.createDailyTaskBottomSheet;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -38,7 +41,6 @@ import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator
 
 public class TasksFragment extends Fragment {
 
-    private static final int RC_NOTIFICATION = 99;
     private List<TaskModel> tasks;
     private List<TaskModel> completedTasks;
     private static RecyclerView recyclerView;
@@ -55,13 +57,19 @@ public class TasksFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate (R.layout.fragment_tasks, container, false);
 
+        //set title to current date
         TextView titleOfPage = view.findViewById (R.id.tasksPageTitle);
         titleOfPage.setText (new SimpleDateFormat ("EEE, MMM d", Locale.US).format (Calendar.getInstance ().getTime ()));
 
+        //initialize ui
         initializeRecyclerViews (view);
 
+        //add task button
         FloatingActionButton openBottomSheetPopupToAddTask = view.findViewById (R.id.addTask);
         openBottomSheetPopupToAddTask.setOnClickListener (this::openBottomSheetPopupToAddTask);
+
+        //ask permissions from user
+        FunctionsUtils.askPermissions (getActivity ());
 
         return view;
     }
@@ -117,14 +125,22 @@ public class TasksFragment extends Fragment {
         new createDailyTaskBottomSheet (getContext (), tasks, adapterOfNotCompletedTask).show ();
     }
 
+    //delete daily tasks in 00:00.
     @Override
-    public void onRequestPermissionsResult ( int requestCode, @NonNull String[] permissions,
-    @NonNull int[] grantResults){
-        super.onRequestPermissionsResult (requestCode, permissions, grantResults);
-        if (requestCode == RC_NOTIFICATION) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText (getContext (), "allowed", Toast.LENGTH_SHORT).show ();
-            }
+    public void onResume() {
+        super.onResume();
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getContext ());
+        int lastTimeStarted = settings.getInt("last_time_started", -1);
+        int today = Calendar.getInstance().get(Calendar.DAY_OF_YEAR);
+
+        if (today != lastTimeStarted) {
+            FirebaseUtils.getDailyTaskModel().get().addOnSuccessListener(queryDocumentSnapshots -> {
+                for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                    documentSnapshot.getReference().delete();
+                }
+            });
+
+            settings.edit().putInt("last_time_started", today).apply();
         }
     }
 

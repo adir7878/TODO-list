@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="80dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@android:color/transparent">
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/ProfileImage_ShowParticipants"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:background="@drawable/circle_image"
+        android:scaleType="centerCrop"
+        android:src="@drawable/avatar"
+        app:shapeAppearanceOverlay="@style/Circular"
+        android:padding="8dp"/>
+
+    <TextView
+        android:id="@+id/participant_username"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toEndOf="@id/ProfileImage_ShowParticipants"
+        tools:text="Username"
+        android:textSize="18sp"/>
+
+    <ImageButton
+        android:id="@+id/block_from_room_button"
+        android:layout_width="74dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="10dp"
+        android:layout_centerVertical="true"
+        android:layout_alignParentEnd="true"
+        android:src="@drawable/block_ic"
+        android:backgroundTint="@color/Default_color_for_app"/>
+
+    <ImageButton
+        android:id="@+id/kick_from_room_button"
+        android:layout_width="74dp"
+        android:layout_height="50dp"
+        android:layout_toStartOf="@+id/block_from_room_button"
+        android:layout_centerVertical="true"
+        android:src="@drawable/kick_ic"
+        android:backgroundTint="@color/Default_color_for_app"/>
+
+
+
+</RelativeLayout>

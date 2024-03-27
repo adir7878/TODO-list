@@ -18,17 +18,16 @@ import com.google.android.material.textfield.TextInputEditText;
 import java.util.List;
 
 public class EditListNameBS extends BottomSheetDialog {
-
     @NonNull
     private final List<RoomModel> roomModel;
     private final RoomAdapter adapter;
     private final int adapterPosition;
-    private TextInputEditText textInputEditText;
-    private Button edit;
+    private final TextInputEditText textInputEditText;
+
     public EditListNameBS(@NonNull Context context, List<RoomModel> roomModel, RoomAdapter adapter, int adapterPosition) {
         super (context);
-
         this.roomModel = roomModel;
+
         this.adapter = adapter;
         this.adapterPosition = adapterPosition;
 
@@ -39,7 +38,7 @@ public class EditListNameBS extends BottomSheetDialog {
         textInputEditText.setText (roomModel.get (adapterPosition).getName ().toString ());
         textInputEditText.requestFocus ();
 
-        edit = view.findViewById (R.id.edit_lists_name);
+        Button edit = view.findViewById (R.id.edit_lists_name);
         edit.setOnClickListener (this::editName);
     }
 
@@ -49,9 +48,10 @@ public class EditListNameBS extends BottomSheetDialog {
 
         FirebaseUtils.getSpecificRoom (roomModel.get (adapterPosition).getId ()).get ().addOnCompleteListener (task -> {
             roomModel.get (adapterPosition).setName (textInputEditText.getText ().toString ()); // set the name of the list in the exact position.
-            task.getResult ().getDocuments ().get (0).getReference ().set (roomModel.get (adapterPosition)).addOnSuccessListener (unused -> {
-                adapter.notifyItemChanged (adapterPosition); // notify in the adapter
-            });
+            task.getResult ().getReference ().update ("name", roomModel.get (adapterPosition).getName ())
+                    .addOnSuccessListener (unused -> {
+                        adapter.notifyItemChanged (adapterPosition);
+                    });
         });
         dismiss ();
     }
